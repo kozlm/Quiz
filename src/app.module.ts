@@ -4,13 +4,15 @@ import { GraphQLModule } from '@nestjs/graphql';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { QuizModule } from './quiz/quiz.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { Quiz } from './quiz/models/quiz.entity';
+import { Question } from './quiz/models/question.entity';
 
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
     // GraphQLModule.forRoot<ApolloDriverConfig>({
     //   driver: ApolloDriver,
-    //   autoSchemaFile: 'schema.gql'
+    //   autoSchemaFile: 'src/schema.gql',
     // }),
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
@@ -21,7 +23,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
         username: configService.get('DB_USERNAME'),
         password: configService.get('DB_PASSWORD'),
         database: configService.get('DB_DATABASE'),
-        entities: [],
+        entities: [Quiz, Question],
         synchronize: true,
       }),
       inject: [ConfigService],
