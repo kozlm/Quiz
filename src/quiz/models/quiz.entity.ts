@@ -1,4 +1,4 @@
-import { Field, ID, ObjectType } from "@nestjs/graphql";
+import { Field, ID, Int, ObjectType } from "@nestjs/graphql";
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { Question } from "./question.entity";
 
@@ -7,14 +7,14 @@ import { Question } from "./question.entity";
 @ObjectType()
 export class Quiz {
     @PrimaryGeneratedColumn('increment')
-    @Field(() => ID)
+    @Field(() => Int)
     id: number;
 
     @Column()
     @Field(() => String)
     name: string;
 
-    @OneToMany(() => Question, (question) => question.quiz)
-    @Field(() => [Question])
-    questions: Question[]
+    @OneToMany(() => Question, (question) => question.quiz, { cascade: true })
+    @Field(() => [Question], { nullable: true })
+    questions?: Question[]
 }
