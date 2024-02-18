@@ -23,8 +23,8 @@ export class QuizService{
         })
     }
 
-    removeQuiz(id: number){
-        const deletedQuiz = this.quizRepository.findOne
+    async removeQuiz(id: number){
+        const deletedQuiz = await this.quizRepository.findOne
         ({
             where: { id },
             relations: ['questions'],
@@ -42,5 +42,14 @@ export class QuizService{
             
         this.quizRepository.save(newQuiz);
         return newQuiz;
+    }
+
+    async fetchQuestionsForQuiz(id: number){
+        const quiz = await this.quizRepository.findOne({
+            where: { id },
+            relations: ['questions'],
+        });
+        if (quiz != null) return quiz.questions;
+        else return [];
     }
 }

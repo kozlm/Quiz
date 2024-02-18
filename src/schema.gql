@@ -20,6 +20,7 @@ type Quiz {
 type Query {
   getQuizzes: [Quiz!]
   getQuizById(id: Int!): Quiz
+  fetchQuestionsForQuiz(id: Int!): [Question!]
 }
 
 type Mutation {
