@@ -6,7 +6,7 @@ type Question {
   id: Int!
   text: String!
   type: String!
-  options: [String!]
+  options: [String!]!
   answer: String!
   quiz: Quiz!
 }
@@ -15,6 +15,11 @@ type Quiz {
   id: Int!
   name: String!
   questions: [Question!]
+}
+
+type Result {
+  score: Int!
+  maximumScore: Int!
 }
 
 type Query {
@@ -26,6 +31,7 @@ type Query {
 type Mutation {
   removeQuiz(id: Int!): Quiz
   createQuiz(createQuizData: CreateQuizInput!): Quiz!
+  checkAnswers(attemptData: AttemptInput!): Result!
 }
 
 input CreateQuizInput {
@@ -38,4 +44,14 @@ input CreateQuestionInput {
   type: String! = "single_answer"
   options: [String!]
   answer: String!
+}
+
+input AttemptInput {
+  quizId: Int!
+  questions: [QuestionAttempt!]!
+}
+
+input QuestionAttempt {
+  questionId: Int!
+  givenAnswer: String!
 }

@@ -29,9 +29,9 @@ export class Question {
     @Field(() => String, { defaultValue: QuestionType.SINGLE_ANSWER })
     type: QuestionType;
 
-    @Column({ type: 'text', array: true, nullable: true })
-    @Field(() => [String], { nullable: true })
-    options?: string[];
+    @Column({ type: 'text', array: true, default: [] })
+    @Field(() => [String], { defaultValue: [] })
+    options: string[];
 
     @Column()
     @Field(() => String)

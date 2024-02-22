@@ -3,6 +3,8 @@ import { Quiz } from "../models/quiz.entity";
 import { QuizService } from "../services/quiz.service";
 import { CreateQuizInput } from "../inputs/quiz.input";
 import { Question } from "../models/question.entity";
+import { Result } from "../models/result.object";
+import { AttemptInput } from "../inputs/attempt.input";
 
 @Resolver()
 export class QuizResolver{
@@ -31,5 +33,10 @@ export class QuizResolver{
     @Mutation(() => Quiz)
     createQuiz(@Args('createQuizData') createQuizData: CreateQuizInput){
         return this.quizService.createQuiz(createQuizData);
+    }
+
+    @Mutation(() => Result)
+    checkAnswers(@Args('attemptData') attemptData: AttemptInput){
+        return this.quizService.checkAnswers(attemptData);
     }
 }
