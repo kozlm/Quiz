@@ -5,10 +5,17 @@
 type Question {
   id: Int!
   text: String!
-  type: String!
+  type: QuestionType!
   options: [String!]!
   answer: String!
   quiz: Quiz!
+}
+
+enum QuestionType {
+  SINGLE_ANSWER
+  MULTIPLE_ANSWER
+  SORTING
+  TEXT
 }
 
 type Quiz {
@@ -41,7 +48,7 @@ input CreateQuizInput {
 
 input CreateQuestionInput {
   text: String!
-  type: String! = "single_answer"
+  type: QuestionType! = SINGLE_ANSWER
   options: [String!]
   answer: String!
 }
