@@ -29,8 +29,8 @@ type Query {
 }
 
 type Mutation {
-  removeQuiz(id: Int!): Quiz
-  createQuiz(createQuizData: CreateQuizInput!): Quiz!
+  removeQuiz(id: Int!): String
+  createQuiz(createQuizData: CreateQuizInput!): String!
   checkAnswers(attemptData: AttemptInput!): Result!
 }
 

@@ -5,7 +5,6 @@ import { Repository } from 'typeorm';
 import { Question, QuestionType } from '../models/question.entity';
 import { Quiz } from '../models/quiz.entity';
 import { Result } from '../models/result.object';
-import { mock } from 'node:test';
 import { AttemptInput } from '../inputs/attempt.input';
 import { BadRequestException } from '@nestjs/common';
 
@@ -35,7 +34,6 @@ describe('QuizService', () => {
         quizRepository = module.get<Repository<Quiz>>(getRepositoryToken(Quiz));
         questionRepository = module.get<Repository<Question>>(getRepositoryToken(Question));
     });
-
 
     describe('checkAnswers', () => {
         it('should return result for valid attempt data', async () => {
@@ -250,7 +248,7 @@ describe('QuizService', () => {
 
             await expect(quizService.checkAnswers(attemptData)).rejects
                 .toThrow(new BadRequestException
-                    (`Invalid format of answer to question with ID 1: Answer string for single correct answer type of question should consist of maximum one index.`));
+                    (`Invalid format of answer to question with ID 1: Answer string for single-correct answer type of question should consist of maximum one index.`));
         });
 
         it('should throw BadRequestException for incorrect format of answer to sorting type of question', async () => {

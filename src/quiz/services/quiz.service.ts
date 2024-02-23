@@ -19,11 +19,13 @@ export class QuizService {
         return this.quizRepository.find({ relations: ['questions'] })
     }
 
-    getQuizById(id: number) {
-        return this.quizRepository.findOne({
+    async getQuizById(id: number) {
+        const quiz = await this.quizRepository.findOne({
             where: { id },
             relations: ['questions'],
         })
+        if (quiz) return quiz;
+        else throw new BadRequestException(`Quiz with ID ${id} not found.`);;
     }
 
     async removeQuiz(id: number) {
@@ -33,19 +35,52 @@ export class QuizService {
                 relations: ['questions'],
             });
         this.quizRepository.delete({ id });
-        return deletedQuiz;
+        if (!deletedQuiz) return `Quiz with ID ${id} not found.`;
+        else return `Successfully removed quiz with ID ${id}.`;
     }
 
     createQuiz(createQuizData: CreateQuizInput) {
-        const questions = this.questionRepository.create(createQuizData.questions);
+        const newQuestions = this.questionRepository.create(createQuizData.questions);
 
         const newQuiz = this.quizRepository.create({
             name: createQuizData.name,
-            questions: questions,
+            questions: newQuestions,
+        });
+
+
+        newQuiz.questions.forEach((question: Question) => {
+
+            const answer = question.answer;
+            const no = newQuiz.questions.indexOf(question);
+
+            if (question.options.length > 5 || question.options.length === 0) throw new BadRequestException
+                (`Invalid format of options field in question No ${no}: Question can include maximum six options and needs to have at least one option.`)
+
+            try {
+                if (question.type !== 'text') this.checkNonTextAnswerFormat(answer, question.options.length);
+            }
+            catch (e) {
+                throw new BadRequestException(`Invalid format of answer field in question No ${no}: ${e.message}`);
+            }
+
+            switch (question.type) {
+                case 'single_answer':
+                    if (answer.length !== 1) throw new BadRequestException
+                        (`Invalid format of answer field in question No ${no}: Answer string for single-correct answer type of question should consist of exactly one index.`);
+                    break;
+                case 'multiple_answer':
+                    question.answer = this.sortString(answer);
+                    break;
+                case 'sorting':
+                    if (answer.length !== question.options.length) throw new BadRequestException
+                        (`Invalid format of answer field in question No ${no}: Answer string for sorting type of question should contain every index of available option.`);
+                    break;
+            }
         });
 
         this.quizRepository.save(newQuiz);
-        return newQuiz;
+
+        return 'Successfully created quiz.';
     }
 
     async fetchQuestionsForQuiz(id: number) {
@@ -54,7 +89,7 @@ export class QuizService {
             relations: ['questions'],
         });
         if (quiz != null) return quiz.questions;
-        else return [];
+        else throw new BadRequestException(`Quiz with ID ${id} not found.`);
     }
 
     async checkAnswers(attemptData: AttemptInput) {
@@ -83,7 +118,7 @@ export class QuizService {
             switch (question.type) {
                 case 'single_answer':
                     if (givenAnswer.length > 1) throw new BadRequestException
-                        (`Invalid format of answer to question with ID ${question.id}: Answer string for single correct answer type of question should consist of maximum one index.`);
+                        (`Invalid format of answer to question with ID ${question.id}: Answer string for single-correct answer type of question should consist of maximum one index.`);
                     break;
                 case 'multiple_answer':
                     givenAnswer = this.sortString(givenAnswer);
