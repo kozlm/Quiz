@@ -6,7 +6,7 @@ export class CreateQuestionInput{
     @Field(() => String)
     text: string;
 
-    @Field(() => String, { defaultValue: QuestionType.SINGLE_ANSWER })
+    @Field(() => QuestionType, { defaultValue: QuestionType.SINGLE_ANSWER })
     type: QuestionType;
 
     @Field(() => [String], { nullable: true })
