@@ -25,7 +25,7 @@ export class QuizService {
             relations: ['questions'],
         })
         if (quiz) return quiz;
-        else throw new BadRequestException(`Quiz with ID ${id} not found.`);;
+        else throw new BadRequestException(`Quiz with ID ${id} not found.`);
     }
 
     async removeQuiz(id: number) {
@@ -34,12 +34,12 @@ export class QuizService {
                 where: { id },
                 relations: ['questions'],
             });
-        this.quizRepository.delete({ id });
+        await this.quizRepository.delete({ id });
         if (!deletedQuiz) return `Quiz with ID ${id} not found.`;
         else return `Successfully removed quiz with ID ${id}.`;
     }
 
-    createQuiz(createQuizData: CreateQuizInput) {
+    async createQuiz(createQuizData: CreateQuizInput) {
         const newQuestions = this.questionRepository.create(createQuizData.questions);
 
         const newQuiz = this.quizRepository.create({
@@ -78,7 +78,7 @@ export class QuizService {
             }
         });
 
-        this.quizRepository.save(newQuiz);
+        await this.quizRepository.save(newQuiz);
 
         return 'Successfully created quiz.';
     }
